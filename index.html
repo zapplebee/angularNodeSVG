@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html ng-app="nodeSVG">
+<head>
+<title>NodeSVG</title>
+<meta name="viewport" content="width=450, user-scalable=no" />
+<link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
+<link href="main.css" rel="stylesheet" type="text/css">
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+<script>
+var nodeSVG = angular.module('nodeSVG',[]);
+
+
+nodeSVG.run(function($rootScope,$window){
+
+
+  $rootScope.halfWindow = window.innerWidth / 2;
+  
+  angular.element($window).bind('resize', function(){
+    $rootScope.halfWindow = window.innerWidth / 2;
+    $rootScope.$apply();
+  });
+
+
+});
+
+nodeSVG.controller('svgCtrl', function($scope,$rootScope,$window){
+
+
+
+});
+</script>
+</head>
+<body>
+<svg ng-controller="svgCtrl" controversion="1.1" xmlns="http://www.w3.org/2000/svg">
+
+
+<g tranform="" ng-attr-transform="translate({{halfWindow}},60)">
+  <g>
+    <path d="M 0 0 L 200 200" />
+    <circle cx="0" cy="0" r="50"/>
+    <foreignObject width="100" height="100" x="-50" y="-50">
+    <a class="mainNode">Main Node</a>
+    </foreignObject>
+  </g>
+
+</g>
+
+</svg>
+<div>
+</div>
+</body>
+</html>
