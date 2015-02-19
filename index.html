@@ -23,6 +23,73 @@ nodeSVG.run(function($rootScope,$window){
 
 });
 
+
+nodeSVG.directive('nodeOut', function(){
+
+  var controller = function($scope,$element){
+  
+  
+    $scope.nodes = [];
+  
+    recur = function(parent){
+    
+      var tempArray = []
+    
+      angular.forEach(parent.children(), function(value, key){
+    
+
+      
+      firstChild = angular.element(value.firstChild);
+      
+      if (angular.element(value).children().eq(1).length > 0){
+        children = recur(angular.element(value).children().eq(1));
+      }else{
+        children = {}
+      }
+      
+      var objA = {
+      'title' : firstChild.html(),
+      'radius': firstChild.attr('radius'),
+      'angle' : firstChild.attr('angle'),
+      'children' : children
+      }
+
+      tempArray.push(objA);
+    
+    });
+    
+
+    return tempArray;
+    
+    }
+    
+    $scope.nodes = (recur($element));
+    console.log($scope.nodes);
+    
+  
+
+    
+
+    
+
+  
+  };
+  
+  //var template = '{{nodes}}';
+  
+  
+  return {
+
+    restrict: 'EA',
+    scope: {
+    },
+    controller: controller,
+    //template: template
+  };
+
+});
+
+
 nodeSVG.controller('svgCtrl', function($scope,$rootScope,$window){
 
 
@@ -31,7 +98,26 @@ nodeSVG.controller('svgCtrl', function($scope,$rootScope,$window){
 </script>
 </head>
 <body>
+
+
+<ul node-out>
+  <li><a href="#" radius="100" angle="30">Test</a></li>
+  <li><a href="#" radius="0" angle="0">Test</a>
+    <ul>
+    <li><a href="#" radius="0" angle="0">Test</a></li>
+    <li><a href="#" radius="0" angle="0">Test</a></li>
+    <li><a href="#" radius="0" angle="0">Test</a></li>
+    <li><a href="#" radius="0" angle="0">Test</a></li>
+    </ul>
+  </li>
+  <li><a href="#" radius="0" angle="0">Test</a></li>
+</ul>
+
 <svg ng-controller="svgCtrl" controversion="1.1" xmlns="http://www.w3.org/2000/svg">
+
+
+
+
 
 
 <g tranform="" ng-attr-transform="translate({{halfWindow}},60)">
