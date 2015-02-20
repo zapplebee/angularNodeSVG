@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=450, user-scalable=no" />
 <link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
 <link href="main.css" rel="stylesheet" type="text/css">
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script>
 var nodeSVG = angular.module('nodeSVG',[]);
 
 
 nodeSVG.run(function($rootScope,$window){
-
 
   $rootScope.halfWindow = window.innerWidth / 2;
   
@@ -20,71 +20,61 @@ nodeSVG.run(function($rootScope,$window){
     $rootScope.$apply();
   });
 
-
 });
 
 
 nodeSVG.directive('nodeOut', function(){
 
-  var controller = function($scope,$element){
+  var controller = function($scope,$element,$transclude){
   
-  
-    $scope.nodes = [];
-  
-    recur = function(parent){
-    
-      var tempArray = []
-    
-      angular.forEach(parent.children(), function(value, key){
-    
-
+    makeMap = function(collection){
+      var returner = [];
       
-      firstChild = angular.element(value.firstChild);
-      
-      if (angular.element(value).children().eq(1).length > 0){
-        children = recur(angular.element(value).children().eq(1));
-      }else{
-        children = {}
-      }
-      
-      var objA = {
-      'title' : firstChild.html(),
-      'radius': firstChild.attr('radius'),
-      'angle' : firstChild.attr('angle'),
-      'children' : children
-      }
+      angular.forEach(collection,function(val,key){
+        
+        var $link = $(val).children('a').first();
+        var title = $link.html();
+        var angle = $link.attr('angle');
+        var radius = $link.attr('radius');
+        
+        var $childCollection = $(val).children('ul').children('li');
+        
+        var children = makeMap($childCollection);
+        
+        var tempObj = {
+          'title'    : title,
+          'angle'    : angle,
+          'radius'   : radius,
+          'children' : children
+        }
+        
+        returner.push(tempObj);
 
-      tempArray.push(objA);
+      });
     
-    });
-    
-
-    return tempArray;
+      return (returner);
     
     }
-    
-    $scope.nodes = (recur($element));
-    console.log($scope.nodes);
-    
-  
 
-    
+    $transclude(function(clone,scope){
 
-    
+      $cloneElement = $(clone);
+      $scope.x = makeMap($cloneElement.filter('li'));
+         
+    });
 
-  
   };
-  
-  //var template = '{{nodes}}';
-  
-  
+
+  var template = '<pre>{{x}}</pre>';
+
   return {
 
-    restrict: 'EA',
-    scope: {
-    },
-    controller: controller,
-    //template: template
+    restrict: 'A',
+    replace: true,
+    transclude:true,
+    scope: {},
+    controller:controller,
+    template: template,
   };
 
 });
@@ -99,20 +89,18 @@ nodeSVG.controller('svgCtrl', function($scope,$rootScope,$window){
 </head>
 <body>
 
-
 <ul node-out>
-  <li><a href="#" radius="100" angle="30">Test</a></li>
-  <li><a href="#" radius="0" angle="0">Test</a>
+  <li><a href="#" radius="100" angle="30">Test A</a></li>
+  <li><a href="#" radius="0" angle="0">Test Bx</a>
     <ul>
-    <li><a href="#" radius="0" angle="0">Test</a></li>
-    <li><a href="#" radius="0" angle="0">Test</a></li>
-    <li><a href="#" radius="0" angle="0">Test</a></li>
-    <li><a href="#" radius="0" angle="0">Test</a></li>
+    <li><a href="#" radius="0" angle="0">Test B1</a></li>
+    <li><a href="#" radius="0" angle="0">Test B2</a></li>
+    <li><a href="#" radius="0" angle="0">Test B3</a></li>
+    <li><a href="#" radius="0" angle="0">Test B5</a></li>
     </ul>
   </li>
-  <li><a href="#" radius="0" angle="0">Test</a></li>
+  <li><a href="#" radius="0" angle="0">Test C</a></li>
 </ul>
-
 <svg ng-controller="svgCtrl" controversion="1.1" xmlns="http://www.w3.org/2000/svg">
 
 
