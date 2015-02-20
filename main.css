@@ -6,6 +6,10 @@ height: 100%;
 
 }
 
+svg{
+display: block;
+}
+
 svg path{
 
   stroke:#999999;
@@ -26,6 +30,7 @@ font-family: 'Muli', sans-serif;
 text-transform:lowercase;
 letter-spacing: 3px;
 font-size: 10px;
+text-decoration:none;
 
 display: table-cell;
 vertical-align: middle;
