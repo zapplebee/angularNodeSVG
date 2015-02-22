@@ -44,23 +44,9 @@ nodeSVG.directive('nodeOut', function(){
       
       var returner = [];
       var nodeCount = collection.length;
-      var keyAngle;
-      console.log(nodeCount % 2);
       var adjustedNodeCount = (2 * nodeCount) - 2;
-      if(!(nodeCount % 2)){
-        adjustedNodeCount = (2 * nodeCount) - 2;
-      }else{
-        adjustedNodeCount = (2 * nodeCount) - 2;
-      }
-      
-      console.log('adjustedNodeCount: ' + adjustedNodeCount);
-      
-      keyAngle = 360/adjustedNodeCount | 0;
-      
-      console.log(' keyAngle:' + keyAngle)
-      console.log('nodeCount:' + nodeCount);
-      
-      
+
+      var keyAngle = 360/adjustedNodeCount | 0;
 
         
       var getRadius = function(givenAngle,paddedRadius){
@@ -127,7 +113,6 @@ nodeSVG.directive('nodeOut', function(){
 
       $cloneElement = $(clone);
       $scope.nodeMap = makeMap($cloneElement.filter('li'));
-      console.log($scope.nodeMap);
          
     });
 
@@ -185,7 +170,6 @@ nodeSVG.controller('svgCtrl', function($scope,$rootScope,$window){
 <ul node-out>
   <li><a href="#">Home</a>
   <ul>
-  <li><a href="#">Test B</a></li>
   <li><a href="#">Test B</a></li>
   <li><a href="#">Test B</a></li>
   <li><a href="#">Test B</a></li>
