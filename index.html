@@ -31,28 +31,38 @@ nodeSVG.directive('nodeOut', function(){
     
       var origin = origin || {'x':0,'y':0};
       
-      
-     var plotX = function(innerDegree,innerRadius){
-      return innerRadius * Math.cos(innerDegree*Math.PI/180);
-     }
+      var plotX = function(radian,radius){
+     
+        return radius * Math.cos(radian);
+     
+      }
         
-     var plotY = function(innerDegree,innerRadius){
-      return innerRadius * Math.sin(innerDegree*Math.PI/180);
-     }
-      
+     
+      var plotY = function(radian,radius){
+        return radius * Math.sin(radian);
+      }
       
       
       var returner = [];
       var nodeCount = collection.length;
       var adjustedNodeCount = (2 * nodeCount) - 2;
 
-      var keyAngle = 360/adjustedNodeCount | 0;
+      var keyRadian;
+      if(adjustedNodeCount !== 0){
+        keyRadian = 2 * (Math.PI/adjustedNodeCount);
+      }
+      else{
+        keyRadian = 0;
+      }
+      console.log('adjustedNodeCount: ' + adjustedNodeCount);
+      console.log(keyRadian);
 
         
-      var getRadius = function(givenAngle,paddedRadius){
-
-        var angleA = givenAngle / 2;
-        var radius = (paddedRadius / Math.sin(angleA * (Math.PI / 180)));
+      
+      var getRadius = function(givenRadian,paddedRadius){
+      
+      
+        var radius = (paddedRadius / Math.sin(givenRadian / 2));
         if (radius > 120){
           return radius;
         }else{
@@ -64,7 +74,7 @@ nodeSVG.directive('nodeOut', function(){
 
       var radius;
       if(nodeCount > 1){
-        radius = getRadius(keyAngle,60);
+        radius = getRadius(keyRadian,60);
       }
       else{
         radius = 0;
@@ -77,11 +87,11 @@ nodeSVG.directive('nodeOut', function(){
       
         var $link = $(val).children('a').first();
         var title = $link.html();
-        var angle = key * keyAngle;
+        var radian = key * keyRadian;
 
 
         var href = $link.attr('href');
-        var coordinates = {'x':plotX(angle,radius),'y':plotY(angle,radius)};
+        var coordinates = {'x':plotX(radian,radius),'y':plotY(radian,radius)};
         var $childCollection = $(val).children('ul').children('li');
         var children;
         if($childCollection.length > 0){
@@ -170,11 +180,12 @@ nodeSVG.controller('svgCtrl', function($scope,$rootScope,$window){
 <ul node-out>
   <li><a href="#">Home</a>
   <ul>
-  <li><a href="#">Test B</a></li>
-  <li><a href="#">Test B</a></li>
-  <li><a href="#">Test B</a></li>
-  <li><a href="#">Test B</a></li>
-  <li><a href="#">Test B</a></li>
+  <li><a href="#">Test 1</a></li>
+  <li><a href="#">Test 2</a></li>
+  <li><a href="#">Test 3</a></li>
+  <li><a href="#">Test 4</a></li>
+  <li><a href="#">Test 5</a></li>
+  <li><a href="#">Test 6</a></li>
   </li>
   <ul>
 </ul>
