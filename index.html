@@ -63,10 +63,10 @@ nodeSVG.directive('nodeOut', function(){
       
       
         var radius = (paddedRadius / Math.sin(givenRadian / 2));
-        if (radius > 120){
+        if (radius > (paddedRadius * 2)){
           return radius;
         }else{
-          return 120;
+          return (paddedRadius * 2);
         }
       
       }
@@ -74,7 +74,7 @@ nodeSVG.directive('nodeOut', function(){
 
       var radius;
       if(nodeCount > 1){
-        radius = getRadius(keyRadian,60);
+        radius = getRadius(keyRadian,130);
       }
       else{
         radius = 0;
