@@ -31,13 +31,14 @@ text-transform:lowercase;
 letter-spacing: 3px;
 font-size: 10px;
 text-decoration:none;
-
+background-color: #34CF0F;
+border: 5px solid #999999;
 display: table-cell;
 vertical-align: middle;
 
 
-width: 84px;
-height: 84px;
+width: 74px;
+height: 74px;
 padding: 8px;
 
 border-radius: 50px;

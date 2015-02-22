@@ -2,7 +2,12 @@
 <svg controversion="1.1" xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink">
 <g transform="translate(600,60)">
-<g ng-repeat="node in nodeMap" node-bar node="node"></g>
+<g ng-repeat="node in nodeMap">
+<g ng-repeat="childNode in node.children" node-bar node="childNode"></g>
+<g node-bar node="node"></g>
+
+</g>
+</g>
 </g>
 
 </svg>

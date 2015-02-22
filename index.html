@@ -27,30 +27,94 @@ nodeSVG.directive('nodeOut', function(){
 
   var controller = function($scope,$element,$transclude){
   
-    makeMap = function(collection){
+    makeMap = function(collection,origin){
+    
+      var origin = origin || {'x':0,'y':0};
+      
+      
+     var plotX = function(innerDegree,innerRadius){
+      return innerRadius * Math.cos(innerDegree*Math.PI/180);
+     }
+        
+     var plotY = function(innerDegree,innerRadius){
+      return innerRadius * Math.sin(innerDegree*Math.PI/180);
+     }
+      
+      
+      
       var returner = [];
+      var nodeCount = collection.length;
+      var keyAngle;
+      console.log(nodeCount % 2);
+      var adjustedNodeCount = (2 * nodeCount) - 2;
+      if(!(nodeCount % 2)){
+        adjustedNodeCount = (2 * nodeCount) - 2;
+      }else{
+        adjustedNodeCount = (2 * nodeCount) - 2;
+      }
+      
+      console.log('adjustedNodeCount: ' + adjustedNodeCount);
+      
+      keyAngle = 360/adjustedNodeCount | 0;
+      
+      console.log(' keyAngle:' + keyAngle)
+      console.log('nodeCount:' + nodeCount);
+      
+      
+
+        
+      var getRadius = function(givenAngle,paddedRadius){
+
+        var angleA = givenAngle / 2;
+        var radius = (paddedRadius / Math.sin(angleA * (Math.PI / 180)));
+        if (radius > 120){
+          return radius;
+        }else{
+          return 120;
+        }
+      
+      }
+
+
+      var radius;
+      if(nodeCount > 1){
+        radius = getRadius(keyAngle,60);
+      }
+      else{
+        radius = 0;
+      }
+      
+      
+      
       
       angular.forEach(collection,function(val,key){
-        
+      
         var $link = $(val).children('a').first();
         var title = $link.html();
-        var angle = $link.attr('angle');
-        var radius = $link.attr('radius');
+        var angle = key * keyAngle;
+
+
         var href = $link.attr('href');
-        
+        var coordinates = {'x':plotX(angle,radius),'y':plotY(angle,radius)};
         var $childCollection = $(val).children('ul').children('li');
+        var children;
+        if($childCollection.length > 0){
+          children = makeMap($childCollection,coordinates);
+        }else
+        {
+          children = [];
+        }
+
         
-        var children = makeMap($childCollection);
         
         var tempObj = {
-          'title'    : title,
-          'angle'    : angle,
-          'radius'   : radius,
-          'href'     : href,
-          'children' : children,
+          'title'      : title,
+          'href'       : href,
+          'children'   : children,
+          'origin'     : origin,
+          'coordinates': coordinates
           
         }
-        
         returner.push(tempObj);
 
       });
@@ -63,6 +127,7 @@ nodeSVG.directive('nodeOut', function(){
 
       $cloneElement = $(clone);
       $scope.nodeMap = makeMap($cloneElement.filter('li'));
+      console.log($scope.nodeMap);
          
     });
 
@@ -86,39 +151,16 @@ nodeSVG.directive('nodeBar', function ($compile) {
       
     var controller = function ($scope,$interval) {
 
-        console.log($scope.node)
 
         $scope.scale = 1;
-      
-        var plot = function(degree,radius,wantX){
-        
-          var x = radius * Math.cos(degree*Math.PI/180);
-          var y = radius * Math.sin(degree*Math.PI/180);
-          
-          if(wantX){
-            return x;
-          }else{
-            return y;
-          }
-        
-        }
-        
-        $scope.plotted = {
-          'x' : plot($scope.node.angle,$scope.node.radius,true),
-          'y' : plot($scope.node.angle,$scope.node.radius)
-        }
-
-      
    }
       
 
         
      var template = '<g>' +
-                 '<path ng-attr-d="M 0 0 L {{plotted.x}} {{plotted.y}}" stroke="#999999" stroke-width="5" />' +
-                 '<circle ng-attr-cx="{{plotted.x}}" style="fill: #34CF0F" ng-attr-cy="{{plotted.y * scale}}" r="50" stroke="#999999" stroke-width="5" />' +
-                 '<foreignObject ng-attr-x="{{plotted.x - 50}}" ng-attr-y="{{plotted.y - 50}}" width="100" height="100"><a ng-attr-href="{{node.href}}">{{node.title}}</a></foreignObject>'+
-     
-                 '</g>';
+                    '<path ng-attr-d="M 0 0 L {{node.coordinates.x}} {{node.coordinates.y}}" stroke="#999999" stroke-width="5" />' +
+                    '<foreignObject ng-attr-x="{{node.coordinates.x - 50}}" ng-attr-y="{{node.coordinates.y - 50}}" width="100" height="100"><a ng-attr-href="{{node.href}}">{{node.title}}</a></foreignObject>' +
+                    '</g>';
 
       return {
           restrict: 'EA',
@@ -141,17 +183,16 @@ nodeSVG.controller('svgCtrl', function($scope,$rootScope,$window){
 <body>
 
 <ul node-out>
-
-  <li><a href="#" radius="200" angle="33">Another Link</a>
-    <ul>
-    <li><a href="#" radius="300" angle="44">Test B1</a></li>
-    <li><a href="#" radius="0" angle="0">Test B2</a></li>
-    <li><a href="#" radius="0" angle="0">Test B3</a></li>
-    <li><a href="#" radius="0" angle="0">Test B5</a></li>
-    </ul>
+  <li><a href="#">Home</a>
+  <ul>
+  <li><a href="#">Test B</a></li>
+  <li><a href="#">Test B</a></li>
+  <li><a href="#">Test B</a></li>
+  <li><a href="#">Test B</a></li>
+  <li><a href="#">Test B</a></li>
+  <li><a href="#">Test B</a></li>
   </li>
-  <li><a href="#" radius="230" angle="160">Test C</a></li>
-  <li><a href="#" radius="0" angle="0">Home</a></li>
+  <ul>
 </ul>
 
 <div>
